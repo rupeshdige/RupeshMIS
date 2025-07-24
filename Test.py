@@ -73,15 +73,19 @@ st.markdown("""
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
+        gap: 1vw;
     }
     .kpi-card {
-        margin: 0.5vw;
-        min-height: 10vh;
+        margin: 0.5vw 0;
+        min-height: 12vh;
         padding: 1rem;
         border-radius: 0.625rem;
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
         transition: transform 0.2s;
         width: 18%;
+        box-sizing: border-box;
+        overflow: hidden;
+        word-wrap: break-word;
     }
     .kpi-card:hover {
         transform: scale(1.05);
@@ -102,6 +106,9 @@ st.markdown("""
         display: flex;
         align-items: center;
         text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .kpi-card h3 i {
         margin-right: 0.5rem;
@@ -110,24 +117,30 @@ st.markdown("""
         font-size: 0.875rem;
         font-weight: 600;
         margin: 0.3125rem 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    @media (max-width: 1024px) {
+        .kpi-card {
+            width: 30%;
+        }
+    }
+    @media (max-width: 768px) {
+        .kpi-card {
+            width: 45%;
+        }
+    }
+    @media (max-width: 480px) {
+        .kpi-card {
+            width: 90%;
+            margin: 0.5rem auto;
+        }
     }
     .main-content {
         margin-top: 1.5rem;
         margin-left: 0;
         padding: 0;
-    }
-    @media (max-width: 768px) {
-        .kpi-card {
-            width: 100%;
-            margin: 0.5rem 0;
-        }
-        .top-banner {
-            font-size: 1rem;
-            height: 6vh;
-        }
-        .banner-text {
-            font-size: 1rem;
-        }
     }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -136,8 +149,8 @@ st.markdown("""
 @st.cache_data
 def load_data():
     try:
-        # Current date and yesterday for filtering
-        current_date = datetime.now()
+        # Current date and time: 10:04 PM IST, Thursday, July 24, 2025
+        current_date = datetime(2025, 7, 24, 22, 4)  # IST is UTC+5:30
         yesterday = current_date - timedelta(days=1)
         current_month = current_date.month
         current_year = current_date.year
@@ -151,7 +164,7 @@ def load_data():
         # Load Current_Base.xlsb (Jul-Dec 2024 and 2025, filtered by FILE_DATE)
         df_current = pd.read_excel(current_base_file, engine='pyxlsb')
         df_current.columns = df_current.columns.str.strip()
-        df_current["Source"] = "Current_Base"  # Add source identifier
+        df_current["Source"] = "Current_Base"
 
         # Rename only TOUR_START_DATE and Destination
         df_current = df_current.rename(columns={
@@ -215,7 +228,7 @@ def load_data():
         # Load SAP.xlsb (Jan-Jun 2024 and 2025)
         df_sap = pd.read_excel(sap_file, engine='pyxlsb')
         df_sap.columns = df_sap.columns.str.strip()
-        df_sap["Source"] = "SAP"  # Add source identifier
+        df_sap["Source"] = "SAP"
 
         # Rename only TOUR_START_DATE and Group Destination
         df_sap = df_sap.rename(columns={
@@ -449,7 +462,7 @@ def dashboard_page():
             filtered_df = filtered_df[filtered_df["Final Buniess"].astype(str) == final_business]
 
         # Calculate sales for current year (as of yesterday) and previous year
-        current_date = datetime.now()
+        current_date = datetime(2025, 7, 24, 22, 4)  # 10:04 PM IST, July 24, 2025
         yesterday = current_date - timedelta(days=1)
         current_year = current_date.year
         current_month = current_date.month
@@ -496,7 +509,6 @@ def dashboard_page():
         # KPI Cards (Total Sales, LOLH, LOSH, LTDM, AIR)
         with st.container():
             st.markdown('<div class="kpi-container">', unsafe_allow_html=True)
-            cols = st.columns([1, 1, 1, 1, 1])
             required_businesses = ["Total Sales", "LOLH", "LOSH", "LTDM", "AIR"]
             icon_map = {
                 "Total Sales": "fa-chart-line",
@@ -505,15 +517,16 @@ def dashboard_page():
                 "LTDM": "fa-globe-africa",
                 "AIR": "fa-plane"
             }
+            cols = st.columns([1, 1, 1, 1, 1])
             for idx, business in enumerate(required_businesses):
-                with cols[idx]:
+                with cols[idx % 5]:
                     if business == "Total Sales":
                         card_style = "total-sales"
                         text_style = "color: #000000; font-weight: 600;"
                         header_style = "color: #000000;"
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3 style='{header_style}'><i class="fas {icon_map[business]}"></i> Total Sales (Cr)</h3>
+                                <h3 style='{header_style}'><i class="fas {icon_map[business]}"></i> Total Sales</h3>
                                 <p style='{text_style}'>2025 (as of {yesterday.strftime('%b %d')}): ₹{sales_current:.2f} Cr</p>
                                 <p style='{text_style}'>2024 (as of {yesterday.strftime('%b %d')}): ₹{sales_previous:.2f} Cr</p>
                                 <p style='{text_style}'>Growth: {growth_pct:.2f}% 
@@ -533,7 +546,7 @@ def dashboard_page():
                         text_style = "font-weight: 600;"
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3><i class="fas {icon_map[business]}"></i> {business} (Cr)</h3>
+                                <h3><i class="fas {icon_map[business]}"></i> {business}</h3>
                                 <p style='{text_style}'>2025 (as of {yesterday.strftime('%b %d')}): ₹{current_sales:.2f} Cr</p>
                                 <p style='{text_style}'>2024 (as of {yesterday.strftime('%b %d')}): ₹{previous_sales:.2f} Cr</p>
                                 <p style='{text_style} {growth_style}'>Growth: {growth:.2f}% {growth_icon}</p>
@@ -544,7 +557,7 @@ def dashboard_page():
                         text_style = "color: #ff4b4b; font-weight: 600;"
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3><i class="fas {icon_map[business]}"></i> {business} (Cr)</h3>
+                                <h3><i class="fas {icon_map[business]}"></i> {business}</h3>
                                 <p style='{text_style}'>No Data Available</p>
                             </div>
                         """, unsafe_allow_html=True)
@@ -984,7 +997,7 @@ def drr_summary_page():
     st.markdown("### No data displayed (all tables and KPIs removed).")
 
 def target_vs_ach_page():
-    current_date = datetime.now()
+    current_date = datetime(2025, 7, 24, 22, 4)  # 10:04 PM IST, July 24, 2025
     yesterday = current_date - timedelta(days=1)
     current_year = current_date.year
     current_month = current_date.month
@@ -1121,7 +1134,7 @@ def target_vs_ach_page():
                         header_style = "color: #000000;"
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3 style='{header_style}'><i class="fas {icon_map[business]}"></i> Total Sales (Cr)</h3>
+                                <h3 style='{header_style}'><i class="fas {icon_map[business]}"></i> Total Sales</h3>
                                 <p style='{text_style}'>2025 (as of {yesterday.strftime('%b %d')}): ₹{sales_current:.2f} Cr</p>
                                 <p style='{text_style}'>Target: ₹{total_target:.2f} Cr</p>
                                 <p style='{text_style}'>Achievement: {ach_pct:.2f}%</p>
@@ -1138,7 +1151,7 @@ def target_vs_ach_page():
                         text_style = "font-weight: 600;"
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3><i class="fas {icon_map[business]}"></i> {business} (Cr)</h3>
+                                <h3><i class="fas {icon_map[business]}"></i> {business}</h3>
                                 <p style='{text_style}'>2025 (as of {yesterday.strftime('%b %d')}): ₹{current_sales:.2f} Cr</p>
                                 <p style='{text_style}'>Target: ₹{target:.2f} Cr</p>
                                 <p style='{text_style}'>Achievement: {ach_pct:.2f}%</p>
@@ -1154,7 +1167,7 @@ def target_vs_ach_page():
                         ach_pct = 0
                         st.markdown(f"""
                             <div class="kpi-card {card_style}" style='text-align: center;'>
-                                <h3><i class="fas {icon_map[business]}"></i> {business} (Cr)</h3>
+                                <h3><i class="fas {icon_map[business]}"></i> {business}</h3>
                                 <p style='{text_style}'>2025 Sales: No Data</p>
                                 <p style='{text_style}'>Target: ₹{target:.2f} Cr</p>
                                 <p style='{text_style}'>Achievement: N/A</p>
