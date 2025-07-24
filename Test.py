@@ -7,15 +7,14 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # === CONFIG ===
-base_path = r"C:\\Users\DigeRps\OneDrive - Thomas Cook Ltd\\Desktop\\Python\\Dashboard"
-base_path_files = r"C:\\Users\DigeRps\OneDrive - Thomas Cook Ltd\\Desktop\\Python\\Base"
-bg_image = os.path.join(base_path, "Travel_Photo.jpg")
-logo_path = os.path.join(base_path, "TC-logo-Vertical.png")
-tm_logo_path = os.path.join(base_path, "TM logo.png")
-user_file = os.path.join(base_path, "Emp_base.csv")
-current_base_file = os.path.join(base_path_files, "Current_Base.xlsb")
-sap_file = os.path.join(base_path_files, "SAP.xlsb")
-target_file = os.path.join(base_path, "Target.csv")
+
+bg_image = os.path.join("Travel_Photo.jpg")
+logo_path = os.path.join("TC-logo-Vertical.png")
+tm_logo_path = os.path.join("TM logo.png")
+user_file = os.path.join("Emp_base.csv")
+current_base_file = os.path.join("Current_Base.xlsb")
+sap_file = os.path.join("SAP.xlsb")
+target_file = os.path.join("Target.csv")
 
 st.set_page_config(page_title="Thomas Cook Dashboard", layout="wide")
 
