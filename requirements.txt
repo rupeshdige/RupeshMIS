@@ -1,5 +1,5 @@
-streamlit==1.29.0
-pandas==2.2.2
-plotly==5.18.0
+streamlit==1.39.0
+pandas==2.2.3
+plotly==5.24.1
 pyxlsb==1.0.10
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
