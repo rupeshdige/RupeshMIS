@@ -119,7 +119,7 @@ st.markdown("""
         margin: 0.3125rem 0;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: unset;
     }
     @media (max-width: 1024px) {
         .kpi-card {
