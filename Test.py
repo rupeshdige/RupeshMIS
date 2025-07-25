@@ -82,7 +82,7 @@ st.markdown("""
         border-radius: 0.625rem;
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
         transition: transform 0.2s;
-        width: 18%;
+        width: 100%;
         box-sizing: border-box;
         overflow: hidden;
         word-wrap: break-word;
